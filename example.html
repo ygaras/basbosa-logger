@@ -1,0 +1,19 @@
+<html>
+	<head>
+		 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+		 <script src="index.js" type="text/javascript"></script>
+		<script>
+			// Leves are 'error', 'warn', 'info', 'debug', 'trace'
+			Logger.setOptions({level : 4});
+			Logger.trace('A ver detaileed message that will not appear on the UI logger beacuse domis not ready yet');
+			Logger.setOptions({level : 2});
+			Logger.trace('A message that will not appear any way because trace is level 4 and now loggin level is 2');
+			$(document).ready(function() {
+				Logger.info('An information message on the UI logger');
+			});
+			
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

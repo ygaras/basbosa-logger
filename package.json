@@ -1,0 +1,12 @@
+{
+  "name": "basbosa-logger",
+  "version": "0.0.1",
+  "description": "A universal JavaScript logger with many cool features",
+  "author": {
+    "name": "Youssef Garas",
+    "email": "ygaras@hub43.com"
+  },
+  "dependencies": {
+	"requirejs": "2.0.4"
+  }   
+}
