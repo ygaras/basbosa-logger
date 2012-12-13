@@ -1,9 +1,6 @@
 basbosa-logger
 ==============
 
-basbosa-logger
-==============
-
 Features
 ----------
 
