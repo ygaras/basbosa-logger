@@ -103,6 +103,9 @@
    */
   Logger.prototype.setOptions = function(opts) {
     // Auto populate logging level
+    if (typeof Basbosa !== 'undefined' && typeof Basbosa('Config') !== 'undefined') {
+      defaultOptions.level = Basbosa('Config').get('logging');
+    }
     typeof Config != 'undefined' && Config.logging != 'undefined'
         && (defaultOptions.level = Config.logging);
     if (typeof BasbosaConfig != 'undefined') {
