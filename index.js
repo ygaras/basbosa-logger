@@ -124,11 +124,12 @@
   };
 
   Logger.prototype.initUiLogger = function() {
-    var $buttonMax, $buttonClose;
+    var $buttonMax, $buttonClose, self =this;
     
-    if (typeof $ === 'undefined') return;
+    if (typeof $ === 'undefined' || this.uiLogger) return;
     
     $(function() {
+      if (!self.uiLogger) return;
       $('body').append($('<div>').addClass('basbosa-logger').css({
         'position' : 'fixed',
         'top' : '0',
