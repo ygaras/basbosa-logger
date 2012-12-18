@@ -11,6 +11,8 @@
 			$(document).ready(function() {
 				Logger.info('An information message on the UI logger');
 				Logger.warn('Logger object', Logger);
+				Logger.disableUiLogger();
+				Logger.warn('Logger object', Logger);
 			});
 			
 		</script>

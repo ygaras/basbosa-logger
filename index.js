@@ -173,6 +173,12 @@
 
     isFirstTime = false;
   };
+  
+  Logger.prototype.disableUiLogger = function() {
+    if (typeof $ === 'undefined') return;
+    $('.basbosa-logger').remove();
+    this.setOptions({uiLogger : false});
+  };
 
   /**
    * log method.
