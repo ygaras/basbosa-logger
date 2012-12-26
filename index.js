@@ -208,25 +208,38 @@
   };
   
   Logger.prototype.getCallingFile = function() {
-    var callingFile = '', baseFolder = '', frames;
+    var callingFile = '', baseFolder = '', frames, DS = '/';
     try {
       throw (new Error());
     } catch (e) {
       if (e.stack) {
         frames = e.stack.split('\n');
-        if (frames[0] == 'Error') frames.pop();
-      
-        callingFile = e.stack.split('\n')[3];
         
-        // replace base path, on browser
-        if (typeof window !== 'undefined') {
+        if (frames[0].indexOf('Error') != -1) frames.shift();
+        
+        callingFile = frames[3];
+        
+        if (SERVER) {
+          // When basbosa fromwork is loaded
+          if (typeof APP_APTH !== 'undefined') {
+            baseFolder = APP_APTH;
+          } else {
+            var pdn =  require('path').dirname;
+            baseFolder = pdn(pdn(pdn(__filename)));
+            DS = require('path').sep;
+            
+          }
+          
+        } if (typeof window !== 'undefined') {
+          // replace base path, on browser
           baseFolder =  window.location.protocol + '//' + window.location.host;
         } 
       }
     }
     callingFile = callingFile.replace(baseFolder, '').replace(')', '');
     callingFile = callingFile.replace(')', '');
-    callingFile = callingFile.split('/').splice(1).join('/');
+    console.log(callingFile);
+    callingFile = callingFile.split(DS).splice(1).join(DS);
     return '[' + callingFile + ']';
   };
 
