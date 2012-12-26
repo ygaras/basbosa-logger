@@ -20,7 +20,7 @@
   /**
    * SERVER: true if this code is running server-side, false if client-side
    */
-  var SERVER = typeof (exports) !== 'undefined', instance, isFirstTime = true;
+  var SERVER = typeof (exports) !== 'undefined', instance;
 
   /**
    * 
@@ -125,8 +125,8 @@
 
   Logger.prototype.initUiLogger = function() {
     var $buttonMax, $buttonClose, self =this;
-    
-    if (typeof $ === 'undefined' || this.uiLogger) return;
+
+    if (typeof $ === 'undefined' || !this.uiLogger) return;
     
     $(function() {
       if (!self.uiLogger) return;
@@ -184,7 +184,7 @@
    * @api public
    */
   Logger.prototype.log = function(type) {
-    var index, consoleArgs, filePath = '', lineNumber, traceDetails;
+    var index, consoleArgs;
 
     for ( var i = 0; i < levels.length; i++) {
       if (levels[i] == type)
@@ -196,67 +196,38 @@
         || typeof console.log == 'undefined')
       return this;
 
-    // Works only for V8 (i.e. Chrome & nodejs)
-    Error.prepareStackTrace = function(error, frames) {
-      var frame, i, basFolder;
-      for (i = 0; i < frames.length; ++i) {
-        if (!frames[i].getFileName())
-          return;
-        // if this is not the path to logging_module.js, assign this frame
-        // to the var 'frame'
-        if (frames[i].getFileName().indexOf('index.js') == -1) {
-          frame = frames[i];
-          break;
-        }
-      }
-      filePath = frame.getFileName();
-      // Exclude app root from logged file path
-      if (typeof APP_PATH != 'undefined')
-        filePath = filePath.replace(APP_PATH, '');
-      if (!SERVER)
-        filePath = filePath.replace(window.location.origin, '');
 
-      lineNumber = frame.getLineNumber();
-      return '';
-    };
+    var callingFile = this.getCallingFile();
 
-    try {
-      throw (new Error());
-    }
-
-    catch (e) {
-      var frames, i;
-      // if in V8, this will change filePath and lineNumber to the expected
-      // values
-      // thanks to Error.prepareStackTrace = ... above
-      e.stack;
-      // if in V8
-      if (!(filePath == '' && lineNumber == -1))
-        traceDetails = '[@' + filePath + ':' + lineNumber + ']';
-      // else (i.e. Firefox)
-      else if (e.stack) {
-        frames = e.stack.split('\n');
-        for (i = 0; i < frames.length; ++i) {
-          // if this is not the path to logging_module.js, assign this frame
-          // to the var 'traceDetails'
-          if (frames[i].indexOf('logging_module') == -1) {
-            traceDetails = frames[i];
-            break;
-          }
-        }
-        basFolder =  window.location.protocol + '//' + window.location.host;
-        traceDetails = '['+ 
-          traceDetails.substring(traceDetails.indexOf('@')).replace(basFolder, '') 
-          + ']';
-      }
-    }
-
-    consoleArgs = this.getMyConsoleArgs(arguments, this, type, traceDetails, index);
+    consoleArgs = this.getMyConsoleArgs(arguments, this, type, callingFile, index);
     console.log && console.log.apply && console.log.apply(console, consoleArgs);
     if (this.uiLogger) {
       this.uiLog(type, consoleArgs);
     }
     return this;
+  };
+  
+  Logger.prototype.getCallingFile = function() {
+    var callingFile = '', baseFolder = '', frames;
+    try {
+      throw (new Error());
+    } catch (e) {
+      if (e.stack) {
+        frames = e.stack.split('\n');
+        if (frames[0] == 'Error') frames.pop();
+      
+        callingFile = e.stack.split('\n')[3];
+        
+        // replace base path, on browser
+        if (typeof window !== 'undefined') {
+          baseFolder =  window.location.protocol + '//' + window.location.host;
+        } 
+      }
+    }
+    callingFile = callingFile.replace(baseFolder, '').replace(')', '');
+    callingFile = callingFile.replace(')', '');
+    callingFile = callingFile.split('/').splice(1).join('/');
+    return '[' + callingFile + ']';
   };
 
   Logger.prototype.getLogTime = function() {
