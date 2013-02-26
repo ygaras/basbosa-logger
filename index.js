@@ -39,7 +39,7 @@
   var defaultOptions = {
     colors : SERVER ? true : false,
     enabled : true,
-    showTime : true,
+    showTime : false,
     showPath : true,
     level : 2,
     stringifyObjects : false,
@@ -208,7 +208,7 @@
   };
   
   Logger.prototype.getCallingFile = function() {
-    var callingFile = '', baseFolder = '', frames, DS = '/';
+    var callingFile = '', baseFolder = '', frames, DS = '/', index;
     try {
       throw (new Error());
     } catch (e) {
@@ -221,15 +221,14 @@
         
         if (SERVER) {
           // When basbosa fromwork is loaded
-          if (typeof APP_APTH !== 'undefined') {
-            baseFolder = APP_APTH;
+          if (typeof APP_PATH !== 'undefined') {
+            baseFolder = APP_PATH;
           } else {
             var pdn =  require('path').dirname;
             baseFolder = pdn(pdn(pdn(__filename)));
             DS = require('path').sep;
-            
           }
-          
+
         } if (typeof window !== 'undefined') {
           // replace base path, on browser
           baseFolder =  window.location.protocol + '//' + window.location.host;
@@ -238,8 +237,8 @@
     }
     callingFile = callingFile.replace(baseFolder, '').replace(')', '');
     callingFile = callingFile.replace(')', '');
-    console.log(callingFile);
-    callingFile = callingFile.split(DS).splice(1).join(DS);
+    if (index = callingFile.indexOf('(')) callingFile = callingFile.substr(index + 2);
+    //callingFile = callingFile.split(DS).splice(1).join(DS);
     return '[' + callingFile + ']';
   };
 
