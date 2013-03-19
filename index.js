@@ -93,7 +93,17 @@
    * @api public
    */
   var Logger = function(opts) {
-    this.setOptions(opts);
+    var appDefaults = {};
+
+    if (typeof Basbosa !== 'undefined' && typeof Basbosa('Config') !== 'undefined') {
+      appDefaults = Basbosa('Config').get('basbosaLogger');
+    }
+
+    for ( var optKey in defaultOptions) {
+      this[optKey] = typeof (appDefaults[optKey]) === 'undefined' ? defaultOptions[optKey] : appDefaults[optKey];
+    }
+    this.options(opts);
+
     this.initUiLogger();
   };
 
@@ -101,24 +111,11 @@
    * setOptions method to update logger options after initialization
    * 
    */
-  Logger.prototype.setOptions = function(opts) {
-    // Auto populate logging level
-    if (typeof Basbosa !== 'undefined' && typeof Basbosa('Config') !== 'undefined') {
-      defaultOptions.level = Basbosa('Config').get('logging');
-    }
-    typeof Config != 'undefined' && Config.logging != 'undefined'
-        && (defaultOptions.level = Config.logging);
-    if (typeof BasbosaConfig != 'undefined') {
-      if (BasbosaConfig.logging != 'undefined')
-        defaultOptions.level = BasbosaConfig.logging;
+  Logger.prototype.options = function(opts) {
 
-      // on iphone, no support for multiple arguments to console.log
-      // function
-      // if (BasbosaConfig.agent.family == 'iPhone') opts.poorLogger = true;
-    }
     opts = opts || {}; // make this argument optional
     for ( var optKey in defaultOptions) {
-      this[optKey] = typeof (opts[optKey]) === 'undefined' ? defaultOptions[optKey] : opts[optKey];
+      if (typeof opts[optKey] !== 'undefined') this[optKey] = opts[optKey];
     }
     // _.extend(this, defaultOptions, opts);
   };
