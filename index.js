@@ -95,7 +95,7 @@
   var Logger = function(opts) {
     var appDefaults = {};
 
-    if (typeof Basbosa !== 'undefined' && typeof Basbosa('Config') !== 'undefined') {
+    if (typeof Basbosa !== 'undefined' && Basbosa.added('Config') ) {
       appDefaults = Basbosa('Config').get('basbosaLogger');
     }
 
