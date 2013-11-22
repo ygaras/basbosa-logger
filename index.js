@@ -40,6 +40,7 @@
     colors : SERVER ? true : false,
     enabled : true,
     showTime : false,
+    showDate : false,
     showPath : true,
     level : 2,
     stringifyObjects : false,
@@ -240,13 +241,21 @@
   };
 
   Logger.prototype.getLogTime = function() {
-    var date = new Date()
-    function checkTime(i) {
+    var date = new Date;
+    function pad(i) {
       return i < 10 ? '0' + i : i + '';
     }
     
-    return checkTime(date.getHours()) + ':' + checkTime(date.getMinutes())
-        + ':' + checkTime(date.getSeconds());
+    return pad(date.getHours()) + ':' + pad(date.getMinutes())
+        + ':' + pad(date.getSeconds());
+  };
+
+  Logger.prototype.getLogDate = function() {
+    var date = new Date;
+    function pad(i) {
+      return i < 10 ? '0' + i : i + '';
+    }
+    return pad(date.getUTCFullYear()) + ':' + pad(date.getUTCMonth()) + ':' + pad(date.getUTCDate());
   };
 
   Logger.prototype.uiLog = function(type, outputConsoleArgs) {
@@ -273,6 +282,7 @@
 
   Logger.prototype.getMyConsoleArgs = function(inputConsoleArgs, context, type, traceDetails, index) {
     var outputConsoleArgs = new Array();
+    context.showDate ? outputConsoleArgs.push(context.getLogDate()) : '';
     context.showTime ? outputConsoleArgs.push(context.getLogTime()) : '';
     outputConsoleArgs.push(context.colors ? '\033[' + colors[index] + 'm'
         + pad(type) + ' -\033[39m' : type + ':');
