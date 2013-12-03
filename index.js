@@ -44,7 +44,7 @@
     showPath : true,
     level : 2,
     stringifyObjects : false,
-    uiLogger : true
+    uiLogger : false
   };
 
   /**
