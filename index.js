@@ -255,7 +255,7 @@
     function pad(i) {
       return i < 10 ? '0' + i : i + '';
     }
-    return pad(date.getUTCFullYear()) + ':' + pad(date.getUTCMonth()) + ':' + pad(date.getUTCDate());
+    return pad(date.getUTCFullYear()) + ':' + pad(date.getUTCMonth() + 1) + ':' + pad(date.getUTCDate());
   };
 
   Logger.prototype.uiLog = function(type, outputConsoleArgs) {
